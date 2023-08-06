@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mayikt.mapper.FlightMapper">
+    <!-- resultMap 作关联映射-->
+    <resultMap id="flightEntityMap" type="com.mayikt.entity.FligtEntity">
+        <!-- 数据库中字段名称 column="" property="id"  类中成员属性名称-->
+        <id column="id" property="id"></id>
+        <result column="flight_id" property="flightId"></result>
+        <result column="departure_airport" property="departureAirport"></result>
+        <result column="arrive_airport" property="arriveAirport"></result>
+        <result column="departure_time" property="departureTime"></result>
+        <result column="arrive_time" property="arriveTime"></result>
+        <result column="model" property="model"></result>
+        <result column="is_delete" property="isDelete"></result>
+    </resultMap>
+    <select id="getByAllFlight" resultType="com.mayikt.entity.FligtEntity">
+        select *
+        from mayikt_flight
+    </select>
+    <select id="getByAllFlight2" resultMap="flightEntityMap">
+        select *
+        from mayikt_flight
+        where id = 1;
+    </select>
+    <!-- parameterType int String double 自定义对象类型 可防止sql注入攻击-->
+    <select id="getByIdFlight" parameterType="int" resultMap="flightEntityMap">
+        select *
+        from mayikt_flight
+        where id = #{id};
+    </select>
+    <insert id="insertFlight" parameterType="com.mayikt.entity.FligtEntity">
+        INSERT INTO `mayikt`.`mayikt_flight`(`id`, `flight_id`, `company`, `departure_airport`, `arrive_airport`,
+                                             `departure_time`, `arrive_time`, `model`, `is_delete`)
+        VALUES (null, #{flightId}, #{company}, #{departureAirport}, #{arriveAirport}, #{departureTime}, #{arriveTime},
+                #{model}, #{isDelete});
+    </insert>
+    <delete id="deleteByIDFlight" parameterType="int">
+        delete
+        from mayikt_flight
+        where id = #{id};
+    </delete>
+    <update id="updateFlight" parameterType="com.mayikt.entity.FligtEntity">
+        UPDATE `mayikt`.`mayikt_flight`
+        SET `id`                = #{id},
+            `flight_id`         = #{flightId},
+            `company`           = #{company},
+            `departure_airport` = #{departureAirport},
+            `arrive_airport`    = #{arriveAirport},
+            `departure_time`    = #{departureTime},
+            `arrive_time`       = #{arriveTime},
+            `model`             = #{model},
+            `is_delete`         = #{isDelete}
+        WHERE `id` = #{id};
+    </update>
+    <select id="selectFlight" resultMap="flightEntityMap">
+        SELECT *
+        FROM mayikt_flight
+        WHERE company = #{company}
+          AND model = #{model}
+          AND arrive_airport = #{arriveAirport};
+    </select>
+    <select id="selectFlightPoJo" parameterType="com.mayikt.entity.FligtEntity" resultMap="flightEntityMap">
+        SELECT * FROM mayikt_flight
+        <where>
+            <if test="company!=null and company!=''">
+                and company = #{company}
+            </if>
+            <if test="model!=null and model!=''">
+                AND model = #{model}
+            </if>
+            <if test="arriveAirport!=null and arriveAirport!=''">
+                AND arrive_airport= #{arriveAirport};
+            </if>
+        </where>
+    </select>
+</mapper>
